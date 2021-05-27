@@ -2,6 +2,7 @@ package mycalculator
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"regexp"
@@ -27,7 +28,7 @@ func (self calc) operate(operador string) int {
 	case "*":
 		resultado = operador1 * operador2
 	case "/":
-		if operador2 == 0{
+		if operador2 == 0 {
 			fmt.Println("Error: Division entre cero")
 			return 0
 		}
@@ -45,17 +46,17 @@ func parsear(entrada string) int {
 	return operador
 }
 
-func leerEntrada() string {
+func LeerEntrada() string {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 
 	return scanner.Text()
 }
 
-func getOperands(entrada string) ( calc, string ){
+func GetOperation() (int, error) {
 	regex := regexp.MustCompile(`^(\d+)([\+\-\*\/])(\d+)$`)
 
-	//entrada := leerEntrada()
+	entrada := LeerEntrada()
 
 	if regex.Match([]byte(entrada)) {
 		entrada1 := parsear(regex.ReplaceAllString(entrada, "$1"))
@@ -63,11 +64,10 @@ func getOperands(entrada string) ( calc, string ){
 		entrada2 := parsear(regex.ReplaceAllString(entrada, "$3"))
 
 		c := calc{e1: entrada1, e2: entrada2}
-		//toPrint := c.operate(operador)
-		return c, operador
-		//fmt.Println(toPrint)
+		toPrint := c.operate(operador)
+		return toPrint, nil
 	} else {
-		return calc{}, ""
+		return 0, errors.New("An error occured")
 	}
 
 }
